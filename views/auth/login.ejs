@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link type="text/css" href="/sweetalert2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="auth/style.css">
+    <title>Login / Sign Up</title>
+</head>
+
+<body>
+    <!----------------------- Main Container -------------------------->
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+
+        <!----------------------- Login/Sign-Up Container -------------------------->
+
+        <div class="row border rounded-5 p-3 bg-white shadow box-area" id="modalBox">
+
+            <!--------------------------- Left Box ----------------------------->
+
+            <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
+                id="leftBox" style="background: url('assets/bg-image.jpg') no-repeat center center; background-size: cover; background-color: rgba(0, 0, 0, 0.5);">
+                <div class="featured-image mb-3">
+                    <img src="assets/logo.png" class="img-fluid" style="width: 250px;">
+                </div>
+                <p class="text-white fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+                    Be Verified
+                </p>
+                <small class="text-white text-wrap text-center"
+                    style="width: 30rem; font-family: 'Courier New', Courier, monospace; font-weight: 400; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);">
+                    Join experienced Designers on this platform.
+                </small>
+            </div>
+
+
+            <!--------------------------- Right Box ----------------------------->
+
+            <div class="col-md-6 right-box">
+                <!----------------------- Login Form --------------------------->
+                <div class="row align-items-center" id="loginForm">
+                    <div class="header-text mb-4">
+                        <h2>Hello, Again</h2>
+                        <p>We are happy to have you back.</p>
+                    </div>
+                    <!-- Display error or success messages -->
+                    <div class="input-group mb-3">
+                        <input type="text" name="username" class="form-control form-control-lg bg-light fs-6" placeholder="Username">
+                    </div>
+                    <div class="input-group mb-1">
+                        <input type="password" name="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password">
+                    </div>
+                    <div class="input-group mb-5 d-flex justify-content-between">
+                        <div class="form-check">
+                            <input type="checkbox" name="rememberMe" class="form-check-input" id="formCheck">
+                            <label for="formCheck" class="form-check-label text-secondary"><small>Remember Me</small></label>
+                        </div>
+                        <div class="forgot">
+                            <small><a href="/forgot-password">Forgot Password?</a></small>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <button type="submit" name="loginBtn" id="loginBtn" class="btn btn-lg btn-primary w-100 fs-6">Login</button>
+                    </div>
+                    <div class="row">
+                        <small>Don't have an account? <a href="#" id="showSignUp">Sign Up</a></small>
+                    </div>
+                </div>
+
+                <!------------------------- Sign-Up Form Step 1 -------------------------->
+                <div class="row align-items-center d-none" id="signUpStep1">
+                    <div class="header-text mb-4">
+                        <h2>Sign Up</h2>
+                        <p>Let’s get started with your account.</p>
+                    </div>
+                    <div class="col-6">
+                        <div class="input-group mb-3">
+                            <input type="text" name="user_firstname" class="form-control form-control-lg bg-light fs-6" placeholder="First Name">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="input-group mb-3">
+                            <input type="text" name="user_lastname" class="form-control form-control-lg bg-light fs-6" placeholder="Last Name">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group mb-3">
+                            <input type="email" name="user_email" class="form-control form-control-lg bg-light fs-6" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group mb-3">
+                            <input type="number" name="user_phone" class="form-control form-control-lg bg-light fs-6" placeholder="Phone (Optional)">
+                        </div>
+                    </div>
+                    <div class="input-group mb-3 mt-5">
+                        <button id="nextStep" class="btn btn-lg btn-primary w-100 fs-6">Next</button>
+                    </div>
+                    <div class="row">
+                        <small>Already have an account? <a href="#" id="showLogin1">Log In</a></small>
+                    </div>
+                </div>
+
+                <!------------------------- Sign-Up Form Step 2 -------------------------->
+
+                <div class="row align-items-center d-none" id="signUpStep2">
+                    <div class="header-text mb-4">
+                        <h2>Set Credentials</h2>
+                        <p>Complete your account setup.</p>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="text" name="user_username" class="form-control form-control-lg bg-light fs-6" placeholder="Username">
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" name="user_password" class="form-control form-control-lg bg-light fs-6" placeholder="Password">
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" name="user_confpassword" class="form-control form-control-lg bg-light fs-6"
+                            placeholder="Confirm Password">
+                    </div>
+                    <div class="input-group mb-3">
+                        <button type="submit" id="signUpButton" class="btn btn-lg btn-primary w-100 fs-6">Sign Up</button>
+                    </div>
+                    <div class="row">
+                        <small>Already have an account? <a href="#" id="showLogin2">Log In</a></small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!------------------------- JavaScript for Smooth Transition -------------------------->
+
+    <script type="text/javascript" src="/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/sweetalert2.all.min.js"></script> 
+    <script>
+        const loginForm = document.getElementById("loginForm");
+        const signUpStep1 = document.getElementById("signUpStep1");
+        const signUpStep2 = document.getElementById("signUpStep2");
+        const modalBox = document.getElementById("modalBox");
+        const nextStep = document.getElementById("nextStep");
+        const showSignUp = document.getElementById("showSignUp");
+        const showLogin1 = document.getElementById("showLogin1");
+        const showLogin2 = document.getElementById("showLogin2");
+
+        const updateModalSize = (width, height) => {
+            modalBox.style.width = width;
+            modalBox.style.height = height;
+        };
+
+        showSignUp.addEventListener("click", () => {
+            loginForm.classList.add("d-none");
+            signUpStep1.classList.remove("d-none");
+            updateModalSize("800px", "auto");
+        });
+
+        nextStep.addEventListener("click", () => {
+            const user_firstname = document.querySelector('input[name="user_firstname"]').value;
+            const user_lastname = document.querySelector('input[name="user_lastname"]').value;
+            const user_email = document.querySelector('input[name="user_email"]').value;
+            const user_phone = document.querySelector('input[name="user_phone"]').value;
+
+            // Client-side validation
+            if (user_firstname === '' || user_lastname === '' || user_email === '' || user_phone === '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Please fill in all the required fields!'
+                });
+                return; // Exit if validation fails
+            }
+
+            signUpStep1.classList.add("d-none");
+            signUpStep2.classList.remove("d-none");
+        });
+
+        showLogin1.addEventListener("click", () => {
+            signUpStep1.classList.add("d-none");
+            loginForm.classList.remove("d-none");
+            updateModalSize("930px", "auto");
+        });
+
+        showLogin2.addEventListener("click", () => {
+            signUpStep2.classList.add("d-none");
+            loginForm.classList.remove("d-none");
+            updateModalSize("930px", "auto");
+        });
+
+        document.getElementById('loginBtn').addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent form submission
+
+            const username = document.querySelector('input[name="username"]').value;
+            const password = document.querySelector('input[name="password"]').value;
+            const rememberMe = document.querySelector('input[name="rememberMe"]').checked;
+
+            $.ajax({
+                type: 'POST',
+                url: '/login',
+                data: JSON.stringify({ username, password, rememberMe }), // Send data as JSON
+                contentType: 'application/json',
+                success: function(data) {
+                    console.log(data);
+                    if (data.error) {
+                        Swal.fire('Error', data.error, 'error');
+                    } else {
+                        Swal.fire('Success', data.successMessage, 'success').then(() => {
+                            window.location.href = data.redirectUrl;
+                        });
+                    }
+                },
+                error: function(err) {
+                    console.error('AJAX request failed:', err);
+                    Swal.fire('Error', 'Something went wrong. Please try again!', 'error');
+                }
+            });
+        });
+
+        document.getElementById('signUpButton').addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent form submission
+
+            const user_firstname = document.querySelector('input[name="user_firstname"]').value;
+            const user_lastname = document.querySelector('input[name="user_lastname"]').value;
+            const user_name = user_firstname + user_lastname;
+            console.log(user_name);
+            const user_username = document.querySelector('input[name="user_username"]').value;
+            const user_email = document.querySelector('input[name="user_email"]').value;
+            const user_phone = document.querySelector('input[name="user_phone"]').value;
+            const user_password = document.querySelector('input[name="user_password"]').value;
+            const user_confpassword = document.querySelector('input[name="user_confpassword"]').value;
+
+            // Client-side validation
+            if (user_firstname === '' || user_lastname === '' || user_username === '' || user_email === '' || user_phone === '' || user_password === '' || user_confpassword === '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Please fill in all the required fields!'
+                });
+                return; // Exit if validation fails
+            }
+
+            if (user_password != user_confpassword) {
+                Swal.fire('Error', 'Password konfirmasi berbeda!', 'error');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/signup',
+                data: JSON.stringify({
+                    user_firstname,
+                    user_lastname,
+                    user_name,
+                    user_username,
+                    user_email,
+                    user_phone,
+                    user_password,
+                    user_confpassword,
+                }),
+                contentType: 'application/json',
+                success: function(data) {
+                    if (data.error) {
+                        Swal.fire('Error', data.error, 'error');
+                    } else {
+                        Swal.fire('Success', data.successMessage, 'success').then(() => {
+                            window.location.href = data.redirectUrl;
+                        });
+                        console.log(data.redirectUrl);
+                    }
+                },
+                error: function(err) {
+                    console.error('AJAX request failed:', err);
+                    Swal.fire('Error', 'Something went wrong. Please try again!', 'error');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

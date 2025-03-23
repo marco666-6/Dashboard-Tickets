@@ -1,0 +1,41 @@
+{
+  "name": "catalog-website",
+  "version": "1.0.0",
+  "main": "db_config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "apexcharts": "^4.5.0",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "bootstrap": "^5.3.3",
+    "cookie-parser": "^1.4.7",
+    "datatables": "^1.10.18",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "ejs-locals": "^1.0.2",
+    "express": "^4.21.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.1",
+    "highcharts": "^12.1.2",
+    "jquery": "^3.7.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.0",
+    "nodemailer": "^6.9.16",
+    "nodemon": "^3.1.9",
+    "req-flash": "^0.0.3",
+    "select2": "^4.1.0-rc.0",
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2",
+    "sweetalert2": "^11.15.10"
+  },
+  "description": ""
+}
