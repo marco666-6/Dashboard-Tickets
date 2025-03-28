@@ -25,43 +25,66 @@
             <div class="bg-white top-chart-earn p-3 rounded shadow">
                 <ul class="nav nav-pills chart-header-tab mb-3" id="pills-tab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link chart-nav active" id="pills-status-tab" data-bs-toggle="pill" 
-                                data-bs-target="#pills-status" type="button" role="tab">
-                            Status Distribution
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link chart-nav" id="pills-priority-tab" data-bs-toggle="pill" 
-                                data-bs-target="#pills-priority" type="button" role="tab">
-                            Priority Distribution
+                        <a class="nav-link chart-nav active" id="pills-priority-tab" data-bs-toggle="pill" 
+                           data-bs-target="#pills-priority" type="button" role="tab">
+                            Priority Analysis
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link chart-nav" id="pills-organizational-tab" data-bs-toggle="pill" 
-                                data-bs-target="#pills-organizational" type="button" role="tab">
-                            Organizational Distribution
+                           data-bs-target="#pills-organizational" type="button" role="tab">
+                            Organizational Analysis
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link chart-nav" id="pills-status-tab" data-bs-toggle="pill" 
+                           data-bs-target="#pills-status" type="button" role="tab">
+                            Status Analysis
                         </a>
                     </li>
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade show active" id="pills-status" role="tabpanel">
+                    <!-- Priority Analysis Tab -->
+                    <div class="tab-pane fade show active" id="pills-priority" role="tabpanel">
                         <div class="row">
-                            <div class="col-md-12">
-                                <div id="statusChart"></div>
+                            <div class="col-md-4">
+                                <div id="priorityPieChart"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="priorityBarChart"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="priorityLineChart"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="pills-priority" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div id="priorityChart"></div>
-                            </div>
-                        </div>
-                    </div>
+
+                    <!-- Organizational Analysis Tab -->
                     <div class="tab-pane fade" id="pills-organizational" role="tabpanel">
                         <div class="row">
-                            <div class="col-md-12">
-                                <div id="organizationalChart"></div>
+                            <div class="col-md-4">
+                                <div id="orgPieChart"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="orgBarChart"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="orgLineChart"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Analysis Tab -->
+                    <div class="tab-pane fade" id="pills-status" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div id="statusPieChart"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="statusBarChart"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="statusLineChart"></div>
                             </div>
                         </div>
                     </div>
@@ -107,55 +130,12 @@
     </div>
 </div>
 
-<!-- Highcharts Library -->
-<script src="https://code.highcharts.com/highcharts.js"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Status Distribution Chart
-    Highcharts.chart('statusChart', {
+    // Priority Charts
+    Highcharts.chart('priorityPieChart', {
         chart: { type: 'pie' },
-        title: { text: 'Ticket Status Distribution' },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f}%'
-                }
-            }
-        },
-        series: [{
-            name: 'Status',
-            colorByPoint: true,
-            data: [
-                <% statusDistribution.forEach(function(status, index) { %>
-                {
-                    name: '<%= status.ticket_status %>',
-                    y: <%= status.count %>,
-                    sliced: <%= index === 0 %>,
-                    selected: <%= index === 0 %>
-                }<%= index < statusDistribution.length - 1 ? ',' : '' %>
-                <% }); %>
-            ]
-        }]
-    });
-
-    // Priority Distribution Chart
-    Highcharts.chart('priorityChart', {
-        chart: { type: 'pie' },
-        title: { text: 'Ticket Priority Distribution' },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f}%'
-                }
-            }
-        },
+        title: { text: 'Ticket Priority Distribution (Pie)' },
         series: [{
             name: 'Priority',
             colorByPoint: true,
@@ -172,22 +152,45 @@ document.addEventListener('DOMContentLoaded', function() {
         }]
     });
 
-    // Organizational Distribution Chart
-    Highcharts.chart('organizationalChart', {
-        chart: { type: 'pie' },
-        title: { text: 'Tickets by Organizational Unit' },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f}%'
-                }
-            }
+    Highcharts.chart('priorityBarChart', {
+        chart: { type: 'column' },
+        title: { text: 'Ticket Priority Distribution (Bar)' },
+        xAxis: {
+            categories: [
+                <% priorityDistribution.forEach(function(priority, index) { %>
+                '<%= priority.ticket_priority %>'<%= index < priorityDistribution.length - 1 ? ',' : '' %>
+                <% }); %>
+            ]
         },
         series: [{
-            name: 'Organizational Unit',
+            name: 'Tickets',
+            data: [
+                <% priorityDistribution.forEach(function(priority, index) { %>
+                <%= priority.count %><%= index < priorityDistribution.length - 1 ? ',' : '' %>
+                <% }); %>
+            ]
+        }]
+    });
+
+    Highcharts.chart('priorityLineChart', {
+        chart: { type: 'line' },
+        title: { text: 'Ticket Priority Trend' },
+        series: [{
+            name: 'Tickets',
+            data: [
+                <% priorityDistribution.forEach(function(priority, index) { %>
+                <%= priority.count %><%= index < priorityDistribution.length - 1 ? ',' : '' %>
+                <% }); %>
+            ]
+        }]
+    });
+
+    // Organizational Charts
+    Highcharts.chart('orgPieChart', {
+        chart: { type: 'pie' },
+        title: { text: 'Tickets by Organizational Unit (Pie)' },
+        series: [{
+            name: 'Organizations',
             colorByPoint: true,
             data: [
                 <% organizationalDistribution.forEach(function(org, index) { %>
@@ -197,6 +200,92 @@ document.addEventListener('DOMContentLoaded', function() {
                     sliced: <%= index === 0 %>,
                     selected: <%= index === 0 %>
                 }<%= index < organizationalDistribution.length - 1 ? ',' : '' %>
+                <% }); %>
+            ]
+        }]
+    });
+
+    Highcharts.chart('orgBarChart', {
+        chart: { type: 'column' },
+        title: { text: 'Tickets by Organizational Unit (Bar)' },
+        xAxis: {
+            categories: [
+                <% organizationalDistribution.forEach(function(org, index) { %>
+                '<%= org.organizational %>'<%= index < organizationalDistribution.length - 1 ? ',' : '' %>
+                <% }); %>
+            ]
+        },
+        series: [{
+            name: 'Tickets',
+            data: [
+                <% organizationalDistribution.forEach(function(org, index) { %>
+                <%= org.count %><%= index < organizationalDistribution.length - 1 ? ',' : '' %>
+                <% }); %>
+            ]
+        }]
+    });
+
+    Highcharts.chart('orgLineChart', {
+        chart: { type: 'line' },
+        title: { text: 'Organizational Ticket Distribution' },
+        series: [{
+            name: 'Tickets',
+            data: [
+                <% organizationalDistribution.forEach(function(org, index) { %>
+                <%= org.count %><%= index < organizationalDistribution.length - 1 ? ',' : '' %>
+                <% }); %>
+            ]
+        }]
+    });
+
+    // Status Charts
+    Highcharts.chart('statusPieChart', {
+        chart: { type: 'pie' },
+        title: { text: 'Ticket Status Distribution (Pie)' },
+        series: [{
+            name: 'Status',
+            colorByPoint: true,
+            data: [
+                <% statusDistribution.forEach(function(status, index) { %>
+                {
+                    name: '<%= status.ticket_status %>',
+                    y: <%= status.count %>,
+                    sliced: <%= index === 0 %>,
+                    selected: <%= index === 0 %>
+                }<%= index < statusDistribution.length - 1 ? ',' : '' %>
+                <% }); %>
+            ]
+        }]
+    });
+
+    Highcharts.chart('statusBarChart', {
+        chart: { type: 'column' },
+        title: { text: 'Ticket Status Distribution (Bar)' },
+        xAxis: {
+            categories: [
+                <% statusDistribution.forEach(function(status, index) { %>
+                '<%= status.ticket_status %>'<%= index < statusDistribution.length - 1 ? ',' : '' %>
+                <% }); %>
+            ]
+        },
+        series: [{
+            name: 'Tickets',
+            data: [
+                <% statusDistribution.forEach(function(status, index) { %>
+                <%= status.count %><%= index < statusDistribution.length - 1 ? ',' : '' %>
+                <% }); %>
+            ]
+        }]
+    });
+
+    Highcharts.chart('statusLineChart', {
+        chart: { type: 'line' },
+        title: { text: 'Ticket Status Trend' },
+        series: [{
+            name: 'Tickets',
+            data: [
+                <% statusDistribution.forEach(function(status, index) { %>
+                <%= status.count %><%= index < statusDistribution.length - 1 ? ',' : '' %>
                 <% }); %>
             ]
         }]
