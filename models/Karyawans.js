@@ -9,8 +9,21 @@ module.exports = (sequelize, DataTypes) => {
         karyawan_personnel_number: {
             type: DataTypes.STRING(100),
             allowNull: false,
+            unique: true, // Added unique constraint
         },
-        karyawan_name: {
+        karyawan_group: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+        },
+        karyawan_fullname: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+        },
+        karyawan_firstname: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+        },
+        karyawan_lastname: {
             type: DataTypes.STRING(100),
             allowNull: false,
         },
@@ -29,23 +42,55 @@ module.exports = (sequelize, DataTypes) => {
         karyawan_workschedule: {
             type: DataTypes.STRING(100),
             allowNull: false,
-            unique: true,
         },
         karyawan_longid: {
             type: DataTypes.STRING(255),
             allowNull: true,
         },
+    }, {
+        // Add hooks configuration
+        hooks: {
+            beforeValidate: (karyawan, options) => {
+                if (karyawan.karyawan_fullname) {
+                    const nameParts = karyawan.karyawan_fullname.trim().split(' ');
+                    karyawan.karyawan_firstname = nameParts[0] || '';
+                    karyawan.karyawan_lastname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : nameParts[0];
+                }
+            }
+        },
+        // Optional: Add index for performance
+        indexes: [
+            {
+                unique: true,
+                fields: ['karyawan_personnel_number']
+            }
+        ]
     });
 
-    // // Hooks for hashing password and generating default user_name
-    // Users.beforeCreate(async (user) => {
-    //     if (!user.user_password) {
-    //         user.user_password = await bcrypt.hash("123", 10);
-    //     }
-    //     if (!user.user_name) {
-    //         user.user_name = `${user.user_firstname} ${user.user_lastname}`;
-    //     }
-    // });
+    // Additional hooks for individual create and update
+    Karyawans.beforeCreate(async (karyawan) => {
+        if (karyawan.karyawan_fullname) {
+            const nameParts = karyawan.karyawan_fullname.trim().split(' ');
+            karyawan.karyawan_firstname = nameParts[0] || '';
+            karyawan.karyawan_lastname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : nameParts[0];
+        }
+    });
+
+    Karyawans.beforeUpdate(async (karyawan) => {
+        if (karyawan.changed('karyawan_fullname')) {
+            const nameParts = karyawan.karyawan_fullname.trim().split(' ');
+            karyawan.karyawan_firstname = nameParts[0] || '';
+            karyawan.karyawan_lastname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : nameParts[0];
+        }
+    });
+
+    // Association method
+    Karyawans.associate = (models) => {
+        Karyawans.hasMany(models.Tickets, {
+            foreignKey: 'ticket_person',
+            as: 'tickets'
+        });
+    };
 
     return Karyawans;
 };

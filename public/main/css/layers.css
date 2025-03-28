@@ -192,6 +192,7 @@ img.img-fluid.mr-2 {
     background: linear-gradient(0deg, rgba(180, 58, 112, 1) 20%, rgba(232, 37, 169, 0) 70%);
 }
 
+/* Modify the existing #sidebar styling */
 #sidebar {
     margin: 0;
     padding: 0;
@@ -259,30 +260,6 @@ img.img-fluid.mr-2 {
     box-shadow: -2px 3px 13px 2px #ddd6;
 }
 
-.earn{
-    margin: 12px;
-}
-
-.earn h2{
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.last-month{
-    line-height: 20px;
-    text-align: center;
-}
-
-.last-month h5{
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.last-month p{
-    font-size: 12px;
-    color: var(--text-color);
-}
-
 /* ============   SUB-CONTENT   ============*/
 /* button#pills-week-tab:active {
 
@@ -310,6 +287,6 @@ img.img-fluid.mr-2 {
 
 .chart-header-tab{
     width: 100%;
-    justify-content: end;
+    justify-content: center;
     align-items: center;
 }

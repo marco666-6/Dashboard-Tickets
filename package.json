@@ -35,7 +35,8 @@
     "select2": "^4.1.0-rc.0",
     "sequelize": "^6.37.5",
     "sequelize-cli": "^6.6.2",
-    "sweetalert2": "^11.15.10"
+    "sweetalert2": "^11.15.10",
+    "xlsx": "^0.18.5"
   },
   "description": ""
 }

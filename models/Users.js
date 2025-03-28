@@ -8,10 +8,6 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             allowNull: false,
         },
-        user_name: {
-            type: DataTypes.STRING(100),
-            allowNull: false,
-        },
         user_firstname: {
             type: DataTypes.STRING(100),
             allowNull: false,
@@ -49,15 +45,12 @@ module.exports = (sequelize, DataTypes) => {
         },
     });
 
-    // Hooks for hashing password and generating default user_name
-    Users.beforeCreate(async (user) => {
-        if (!user.user_password) {
-            user.user_password = await bcrypt.hash("123", 10);
-        }
-        if (!user.user_name) {
-            user.user_name = `${user.user_firstname} ${user.user_lastname}`;
-        }
-    });
+    Users.associate = (models) => {
+        Users.hasMany(models.Tickets, {
+            foreignKey: 'ticket_assignee',
+            as: 'tickets'
+        });
+    };
 
     return Users;
 };
