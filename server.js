@@ -250,7 +250,8 @@ app.get('/home', isAuthenticated, checkRole('user', 'admin'), async (req, res) =
                 'ticket_status', 
                 [dbs.sequelize.fn('COUNT', dbs.sequelize.col('ticket_id')), 'count']
             ],
-            group: ['ticket_status']
+            group: ['ticket_status'],
+            raw: true
         });
 
         // Ticket Priority Distribution
@@ -259,7 +260,8 @@ app.get('/home', isAuthenticated, checkRole('user', 'admin'), async (req, res) =
                 'ticket_priority', 
                 [dbs.sequelize.fn('COUNT', dbs.sequelize.col('ticket_id')), 'count']
             ],
-            group: ['ticket_priority']
+            group: ['ticket_priority'],
+            raw: true
         });
 
         // Organizational Distribution
@@ -273,7 +275,123 @@ app.get('/home', isAuthenticated, checkRole('user', 'admin'), async (req, res) =
                 [dbs.sequelize.col('ticketPerson.karyawan_organizational'), 'organizational'],
                 [dbs.sequelize.fn('COUNT', dbs.sequelize.col('ticket_id')), 'count']
             ],
-            group: ['ticketPerson.karyawan_organizational']
+            group: ['ticketPerson.karyawan_organizational'],
+            raw: true
+        });
+
+        // Department Distribution
+        const departmentDistribution = await dbs.Tickets.findAll({
+            include: [{
+                model: dbs.Karyawans,
+                as: 'ticketPerson',
+                attributes: ['karyawan_organizational']
+            }],
+            attributes: [
+                [dbs.sequelize.col('ticketPerson.karyawan_organizational'), 'department'],
+                [dbs.sequelize.fn('COUNT', dbs.sequelize.col('ticket_id')), 'count']
+            ],
+            group: ['ticketPerson.karyawan_organizational'],
+            raw: true
+        });
+
+        // Assignee Distribution
+        const assigneeDistribution = await dbs.Tickets.findAll({
+            include: [{
+                model: dbs.Users,
+                as: 'ticketAssignee',
+                attributes: ['user_firstname', 'user_lastname']
+            }],
+            attributes: [
+                [dbs.sequelize.literal("ticketAssignee.user_lastname"), 'assignee_name'],
+                [dbs.sequelize.fn('COUNT', dbs.sequelize.col('ticket_id')), 'count']
+            ],
+            where: {
+                ticket_assignee: { [dbs.Sequelize.Op.ne]: null }
+            },
+            group: ['ticketAssignee.user_id'],
+            raw: true
+        });
+
+        // Get Tickets by Month for the Area Chart
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 3); // Last 5 months
+
+        const ticketsByMonth = await dbs.Tickets.findAll({
+            attributes: [
+                'ticket_priority',
+                [dbs.sequelize.fn('MONTH', dbs.sequelize.col('ticket_date_start')), 'month'],
+                [dbs.sequelize.fn('YEAR', dbs.sequelize.col('ticket_date_start')), 'year'],
+                [dbs.sequelize.fn('COUNT', dbs.sequelize.col('ticket_id')), 'count']
+            ],
+            where: {
+                ticket_date_start: {
+                    [dbs.Sequelize.Op.gte]: startDate
+                }
+            },
+            group: ['ticket_priority', 
+                   dbs.sequelize.fn('MONTH', dbs.sequelize.col('ticket_date_start')), 
+                   dbs.sequelize.fn('YEAR', dbs.sequelize.col('ticket_date_start'))],
+            order: [
+                [dbs.sequelize.literal('year'), 'ASC'],
+                [dbs.sequelize.literal('month'), 'ASC']
+            ],
+            raw: true
+        });
+
+        // Process the tickets by month data
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const priorityMonthlyData = {};
+        const monthLabels = [];
+        
+        // Initialize data structure
+        ticketsByMonth.forEach(item => {
+            const monthIdx = parseInt(item.month) - 1;
+            const monthYear = `${months[monthIdx]} ${item.year}`;
+            
+            if (!monthLabels.includes(monthYear)) {
+                monthLabels.push(monthYear);
+            }
+            
+            if (!priorityMonthlyData[item.ticket_priority]) {
+                priorityMonthlyData[item.ticket_priority] = {};
+            }
+            
+            priorityMonthlyData[item.ticket_priority][monthYear] = parseInt(item.count);
+        });
+        
+        // Create series data for area chart
+        const priorityAreaChartSeries = Object.keys(priorityMonthlyData).map(priority => {
+            const data = monthLabels.map(month => priorityMonthlyData[priority][month] || 0);
+            return { name: priority, data };
+        });
+
+        // Get department status distribution
+        const departmentStatusDistribution = await dbs.Tickets.findAll({
+            include: [{
+                model: dbs.Karyawans,
+                as: 'ticketPerson',
+                attributes: ['karyawan_organizational']
+            }],
+            attributes: [
+                [dbs.sequelize.col('ticketPerson.karyawan_organizational'), 'department'],
+                'ticket_status',
+                [dbs.sequelize.fn('COUNT', dbs.sequelize.col('ticket_id')), 'count']
+            ],
+            group: ['ticketPerson.karyawan_organizational', 'ticket_status'],
+            raw: true
+        });
+
+        // Process department status data for stacked chart
+        const departments = [...new Set(departmentStatusDistribution.map(item => item.department))];
+        const statuses = [...new Set(departmentStatusDistribution.map(item => item.ticket_status))];
+        
+        const statusSeriesData = {};
+        statuses.forEach(status => {
+            statusSeriesData[status] = departments.map(dept => {
+                const match = departmentStatusDistribution.find(item => 
+                    item.department === dept && item.ticket_status === status);
+                return match ? parseInt(match.count) : 0;
+            });
         });
 
         // Recent Tickets
@@ -291,7 +409,9 @@ app.get('/home', isAuthenticated, checkRole('user', 'admin'), async (req, res) =
                     as: 'ticketAssignee', 
                     attributes: ['user_firstname', 'user_lastname'] 
                 }
-            ]
+            ],
+            raw: true,
+            nest: true
         });
 
         res.render('pages/home', { 
@@ -307,6 +427,12 @@ app.get('/home', isAuthenticated, checkRole('user', 'admin'), async (req, res) =
             statusDistribution,
             priorityDistribution,
             organizationalDistribution,
+            departmentDistribution,
+            assigneeDistribution,
+            monthLabels,
+            priorityAreaChartSeries,
+            departments,
+            statusSeriesData,
             recentTickets
         });
     } catch (error) {
@@ -341,7 +467,7 @@ app.get('/api/workers', isAuthenticated, checkRole('user', 'admin'), async (req,
                 'karyawan_fullname', 
                 'karyawan_group', 
                 'karyawan_organizational', 
-                'karyawan_organizational_unit',
+                'karyawan_organizational',
                 'karyawan_manager'
             ]
         });
@@ -354,7 +480,7 @@ app.get('/api/workers', isAuthenticated, checkRole('user', 'admin'), async (req,
                 <td>${employee.karyawan_fullname}</td>
                 <td>${employee.karyawan_group}</td>
                 <td>${employee.karyawan_organizational}</td>
-                <td>${employee.karyawan_organizational_unit}</td>
+                <td>${employee.karyawan_organizational}</td>
                 <td>${employee.karyawan_manager}</td>
                 <td>
                     <div class="btn-group" role="group">
@@ -460,7 +586,7 @@ app.post('/import-workers', upload.single('excelFile'), async (req, res) => {
                     karyawan_personnel_number: row[0],
                     karyawan_group: row[2],
                     karyawan_organizational: row[3],
-                    karyawan_organizational_unit: row[4],
+                    karyawan_organizational: row[4],
                     karyawan_fullname: fullName,
                     karyawan_firstname: nameParts[0] || '',
                     karyawan_lastname: nameParts.length > 1 ? nameParts[nameParts.length - 1] : nameParts[0],
